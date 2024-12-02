@@ -4,7 +4,7 @@
 
 #include "header.h"
 #include "GPIO.h"
-#include "Sensor.h"
+#include "sensor.h"
 #include "PWM.h"
 #include "motor.h"
 
