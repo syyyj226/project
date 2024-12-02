@@ -1,5 +1,5 @@
-#ifndef __GPIO__
-#define __GPIO__
+#ifndef GPIO_H
+#define GPIO_H
 
 #define IN 0
 #define OUT 1
