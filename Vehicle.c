@@ -24,6 +24,7 @@ int main()
     char order[20] = {0};
     char workState;   // 프로그램 업무 상태
     int runState = 0; // 운행 상태
+    int orderNum = 0; // 처리한 주문 개수
 
     // init motor and sensor
     initMotor();
@@ -35,10 +36,8 @@ int main()
         printf("%s - 운행 준비 완료\n", buffer);
 
         // 업무 유지 물어보기
-        printf("------------------------------\n");
-        printf("    운행 상태를 유지하시겠습니까?    \n");
+        printf("\n    운행 상태를 유지하시겠습니까?    \n");
         printf("            y / n            \n");
-        printf("------------------------------\n");
 
         // 유효한 입력을 받을 때까지 반복
         while (1)
@@ -65,11 +64,15 @@ int main()
         // 주문 입력 및 처리
         fgets(order, sizeof(order), stdin);
         getchar();
-        str[strcspn(str, "\n")] = 0; // 개행 문자 제거
+
+        for (int i = 0; *(order + i) != 0; i + 2)
+        {
+        }
 
         // case 나누어 주행
 
         // 주행 완료 후 다시 처음으로 돌아가기
+        printf("%d 번째 주문 처리가 완료되었습니다.\n", ++order);
     }
     disableSensor();
 
