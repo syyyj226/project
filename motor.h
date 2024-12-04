@@ -19,7 +19,6 @@ void initMotor()
 
     pinMode(IN1, OUTPUT);
     pinMode(IN2, OUTPUT);
-
     pinMode(IN3, OUTPUT);
     pinMode(IN4, OUTPUT);
 
@@ -30,6 +29,7 @@ void stopMotor()
 {
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
+
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
 
@@ -38,8 +38,9 @@ void stopMotor()
 
 void goForward(int num)
 {
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
 
@@ -48,8 +49,9 @@ void goForward(int num)
 
 void goBackward(int num)
 {
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, LOW);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);
 
@@ -60,7 +62,7 @@ void turnLeft(int num)
 {
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
-    digitalWrite(IN3, HIGH);
+    digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
 
     PWMWriteDutyCycle(ENA, num);
@@ -69,9 +71,9 @@ void turnLeft(int num)
 void turnRight(int num)
 {
     digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
 
     PWMWriteDutyCycle(ENA, num);
 }
