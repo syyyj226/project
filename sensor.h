@@ -38,7 +38,7 @@ static int initSensor()
   }
 
   // init ultrawave trigger
-  GPIOWrite(POUT2, 0);
+  GPIOWrite(POUT1, 0);
 
   // Enable GPIO pins
   if (-1 == GPIOExport(POUT2) || -1 == GPIOExport(PIN2))
@@ -57,7 +57,7 @@ static int initSensor()
   }
 
   // init ultrawave trigger
-  GPIOWrite(POUT1, 0);
+  GPIOWrite(POUT2, 0);
 }
 
 static int disableSensor()
@@ -78,6 +78,8 @@ double distance1()
   double time;
   double distance;
 
+  // init ultrawave trigger
+  GPIOWrite(POUT1, 0);
   usleep(10000);
   // start
   if (-1 == GPIOWrite(POUT1, 1))
@@ -112,6 +114,8 @@ double distance2()
   double time;
   double distance;
 
+  // init ultrawave trigger
+  GPIOWrite(POUT1, 0);
   usleep(10000);
   // start
   if (-1 == GPIOWrite(POUT2, 1))
