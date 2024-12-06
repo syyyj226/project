@@ -161,7 +161,7 @@ int forwardSensor() // 0 or 1 return
     return 0;
 }
 
-int forwardSensor() // 0 or 1 return
+int BackSensor() // 0 or 1 return
 {
   clock_t start_t, end_t;
   double time;
