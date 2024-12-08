@@ -65,8 +65,7 @@ static int disableSensor()
     return (4);
 }
 
-// 거리 return 하도록 수정
-int frontSensor(double obstacleDistance) // 0 or 1 return
+int frontSensor(double obstacleDistance)
 {
   clock_t start_t, end_t;
   double time;
@@ -94,43 +93,11 @@ int frontSensor(double obstacleDistance) // 0 or 1 return
   time = (double)(end_t - start_t) / CLOCKS_PER_SEC; // ms
   if (time / 2 * 34000 < obstacleDistance)
     return 1;
-
-  return 0;
+  else
+    return 0;
 }
 
-int frontSensorCheck(double obstacleDistance) // 0 or 1 return
-{
-  clock_t start_t, end_t;
-  double time;
-  double distance;
-
-  // sensor 1
-  GPIOWrite(POUT1, 0);
-  usleep(10000);
-
-  if (-1 == GPIOWrite(POUT1, 1))
-  {
-    printf("gpio write/trigger err\n");
-    return (3);
-  }
-
-  usleep(10);
-  GPIOWrite(POUT1, 0);
-
-  while (GPIORead(PIN1) == 0)
-    start_t = clock();
-
-  while (GPIORead(PIN1) == 1)
-    end_t = clock();
-
-  time = (double)(end_t - start_t) / CLOCKS_PER_SEC; // ms
-  if (time / 2 * 34000 >= obstacleDistance)
-    return 1;
-
-  return 0;
-}
-
-int rearSensorCheck(double obstacleDistance) // 0 or 1 return
+int rearSensor(double obstacleDistance) // 0 or 1 return
 {
   clock_t start_t, end_t;
   double time;
@@ -155,7 +122,7 @@ int rearSensorCheck(double obstacleDistance) // 0 or 1 return
     end_t = clock();
 
   time = (double)(end_t - start_t) / CLOCKS_PER_SEC; // ms
-  if (time / 2 * 34000 >= obstacleDistance)
+  if (time / 2 * 34000 < obstacleDistance)
     return 1;
   else
     return 0;
