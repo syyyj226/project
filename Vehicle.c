@@ -22,9 +22,11 @@ int main()
     // 필요한 변수
     char buffer[20] = {0};
     char order[20] = {0};
-    char workState;   // 프로그램 업무 상태
-    int runState = 0; // 운행 상태
-    int orderNum = 0; // 처리한 주문 개수
+    char destination[5] = {0};
+    char previous, now; // 이전 목적지, 현재 목적지
+    int workState;      // 프로그램 업무 상태
+    int orderNum = 0;   // 처리한 주문 개수
+    int err = 0;
 
     // init motor and sensor
     initMotor();
@@ -32,6 +34,7 @@ int main()
 
     while (1)
     {
+        orderNum = 0;
         strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S", tm_info);
         printf("%s - 운행 준비 완료\n", buffer);
 
@@ -54,26 +57,88 @@ int main()
             printf("\n\n");
         else if (workState == 'n')
             break;
-
-        // 주문 입력 문구 출력
-        printf("------------------------------\n");
-        printf("  주문을 공백으로 구분해 입력해주세요  \n");
-        printf(" 형식: (주문 항목1) (주문 항목2)... \n");
-        printf("------------------------------\n");
-
-        // 주문 입력 및 처리
-        fgets(order, sizeof(order), stdin);
-        getchar();
-
-        for (int i = 0; *(order + i) != 0; i + 2)
+        while (1)
         {
+            err = 0;
+            memset(order, 0, sizeof(order));
+            memset(destination, 0, sizeof(destination));
+
+            // 주문 입력 문구 출력
+            printf("------------------------------\n");
+            printf("  주문을 공백으로 구분해 입력해주세요  \n");
+            printf(" 형식: (주문 항목1) (주문 항목2)... \n");
+            printf("------------------------------\n");
+
+            // 주문 입력 및 처리
+            fgets(order, sizeof(order), stdin);
+            order[strcspn(order, "\n")] = '\0';
+
+            if (strlen(order) > 8)
+            {
+                printf("다시 입력하세요. \n");
+                err = 1;
+            }
+            else if (!err)
+            {
+                for (int i = 0; i < sizeof(order); i++)
+                {
+                    if (i % 2 == 0 && (order + i) != 0 && (*(order + i) != 'A' || *(order + i) != 'B' || *(order + i) != 'C' || *(order + i) != 'D'))
+                    {
+                        printf("다시 입력하세요. \n");
+                        err = 1;
+                    }
+                    if (i % 2 == 1 && *(order) + i != 0)
+                    {
+                        printf("다시 입력하세요. \n");
+                        err = 1;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0, int j = 0; i < sizeof(order); i + 2)
+                {
+                    if (*(order + i) == 'A')
+                        destination[0] = 'A';
+                    else if (*(order + i) == 'B')
+                        destination[2] = 'B';
+                    else if (*(order + i) == 'C')
+                        destination[1] = 'C';
+                    else if (*(order + i) == 'D')
+                        destination[3] = 'D';
+                }
+            }
         }
 
         // case 나누어 주행
+        do
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                // 현재 목적지, 다음 목적지 설정
+                previous = now;
+                now = 0;
+                if (*(destination + i) != 0)
+                {
+                    now = destination[i];
+                    destination[i] = 0;
+                }
 
-        // 주행 완료 후 다시 처음으로 돌아가기
-        printf("%d 번째 주문 처리가 완료되었습니다.\n", ++order);
+                if (previous == 0 && now != 0)
+                    move(now);
+                else if (previous != 0 && now != 0)
+                    moveTo(previous, now);
+                else if (previous != 0 && now == 0)
+                    returnOrigin(previous);
+
+                sleep(5);
+            }
+        } while (now != 0);
+
+        // 주행 완료 후 돌아가기
+        printf("%d 번째 주문 처리가 완료되었습니다.\n", ++orderNum);
     }
+
     disableSensor();
 
     strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S", tm_info);
