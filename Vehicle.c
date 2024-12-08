@@ -8,11 +8,6 @@
 #include "PWM.h"
 #include "motor.h"
 
-#define IDLE 0    // 대기 중
-#define STOPPED 1 // 운행 중지
-#define RUNNING 2 // 운행 중
-#define ARRIVED 3 // 구역 도착
-
 int main()
 {
     // 시간 출력
@@ -82,7 +77,7 @@ int main()
             {
                 for (int i = 0; i < sizeof(order); i++)
                 {
-                    if (i % 2 == 0 && (order + i) != 0 && (*(order + i) != 'A' || *(order + i) != 'B' || *(order + i) != 'C' || *(order + i) != 'D'))
+                    if (i % 2 == 0 && (order + i) != 0 && (*(order + i) != 'A' || *(order + i) != 'B' || *(order + i) != 'C'))
                     {
                         printf("다시 입력하세요. \n");
                         err = 1;
@@ -99,13 +94,11 @@ int main()
                 for (int i = 0, int j = 0; i < sizeof(order); i + 2)
                 {
                     if (*(order + i) == 'A')
-                        destination[0] = 'A';
+                        destination[2] = 'A';
                     else if (*(order + i) == 'B')
-                        destination[2] = 'B';
+                        destination[1] = 'B';
                     else if (*(order + i) == 'C')
-                        destination[1] = 'C';
-                    else if (*(order + i) == 'D')
-                        destination[3] = 'D';
+                        destination[0] = 'C';
                 }
             }
         }
