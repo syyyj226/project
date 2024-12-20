@@ -77,8 +77,6 @@ int main()
                 break;
         }
 
-        printf("%d %d %d\n", destination[0], destination[1], destination[2]);
-
         previous = 'N';
         now = 'N';
         // case 나누어 주행
