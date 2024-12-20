@@ -11,8 +11,8 @@
 #define IN3 3
 #define IN4 2
 
-#define spdTurn 300000
-#define spdGo 300000
+#define spdTurn 1000000 // 수정 필요
+#define spdGo 800000    // 수정 필요
 
 #define obstacleDistance 3 // 장애물 판정 기준 거리
 #define wallDistance 3     // 벽과의 거리
@@ -29,6 +29,7 @@ void initMotor()
     pinMode(IN4, OUTPUT);
 
     PWMinit(ENA);
+    PWMinit(ENB);
 }
 
 void stopMotor()
@@ -40,6 +41,7 @@ void stopMotor()
     digitalWrite(IN4, LOW);
 
     PWMWriteDutyCycle(ENA, 0);
+    PWMWriteDutyCycle(ENB, 0);
 }
 
 void goForward()
@@ -51,6 +53,7 @@ void goForward()
     digitalWrite(IN4, LOW);
 
     PWMWriteDutyCycle(ENA, spdGo);
+    PWMWriteDutyCycle(ENB, spdGo);
 }
 
 void goBackward()
@@ -62,6 +65,7 @@ void goBackward()
     digitalWrite(IN4, HIGH);
 
     PWMWriteDutyCycle(ENA, spdGo);
+    PWMWriteDutyCycle(ENB, spdGo);
 }
 
 void turnLeft()
@@ -73,8 +77,9 @@ void turnLeft()
     digitalWrite(IN4, HIGH);
 
     PWMWriteDutyCycle(ENA, spdTurn);
+    PWMWriteDutyCycle(ENB, spdTurn);
 
-    usleep(320000);
+    usleep(250000);
     stopMotor();
 }
 
@@ -87,8 +92,9 @@ void turnRight()
     digitalWrite(IN4, LOW);
 
     PWMWriteDutyCycle(ENA, spdTurn);
+    PWMWriteDutyCycle(ENB, spdTurn);
 
-    usleep(320000);
+    usleep(250000);
     stopMotor();
 }
 
@@ -104,8 +110,11 @@ void moveBackward(int d1)
 
     while (1)
     {
-        goBackward();
-        stat = 1;
+        if (!stat)
+        {
+            goBackward();
+            stat = 1;
+        }
 
         while (1)
         {
@@ -157,8 +166,11 @@ void moveForward(int d1)
 
     while (1)
     {
-        goForward();
-        stat = 1;
+        if (!stat)
+        {
+            goForward();
+            stat = 1;
+        }
 
         while (1)
         {
@@ -181,7 +193,7 @@ void moveForward(int d1)
         {
             if (!stat)
                 goForward();
-            frnow = frSensor(frpre);
+            frnow = frontSensor(frpre);
             if (frnow != 0)
             {
                 frpre = frnow;
