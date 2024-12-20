@@ -10,11 +10,14 @@
 #define ENB 26
 #define IN3 3
 #define IN4 2
-#define Servo
 
-#define spdTurn 10     // 수정 필요
-#define spdGo 10       // 수정 필요
-#define PWM_RANGE 1024 // range of PWM
+#define spdTurn 300000
+#define spdGo 300000
+
+#define obstacleDistance 3 // 장애물 판정 기준 거리
+#define wallDistance 3     // 벽과의 거리
+#define totalSize 35       // 전체 길이
+#define vehicleSize 14
 
 void initMotor()
 {
@@ -71,7 +74,7 @@ void turnLeft()
 
     PWMWriteDutyCycle(ENA, spdTurn);
 
-    sleep(1);
+    usleep(320000);
     stopMotor();
 }
 
@@ -85,20 +88,151 @@ void turnRight()
 
     PWMWriteDutyCycle(ENA, spdTurn);
 
-    sleep(1);
+    usleep(320000);
     stopMotor();
+}
+
+void moveBackward(int d1)
+{
+    double frpre = 0, frnow = 0;
+    double repre = 0, renow = 0;
+    int stop = 0, stat = 0;
+
+    frpre = 0;
+    repre = 0;
+    stop = 0;
+
+    while (1)
+    {
+        goBackward();
+        stat = 1;
+
+        while (1)
+        {
+            frnow = frontSensor(frpre);
+            if (frnow != 0)
+            {
+                frpre = frnow;
+                if (frnow > d1)
+                    stop = 1;
+                break;
+            }
+        }
+        if (stop)
+        {
+            stopMotor();
+            break;
+        }
+
+        while (!stop)
+        {
+            if (!stat)
+                goBackward();
+            renow = rearSensor(repre);
+            if (renow != 0)
+            {
+                repre = renow;
+                if (renow < obstacleDistance)
+                {
+                    stopMotor();
+                    usleep(500000);
+                    stat = 0;
+                }
+                else
+                    break;
+            }
+        }
+    }
+}
+
+void moveForward(int d1)
+{
+    double frpre = 0, frnow = 0;
+    double repre = 0, renow = 0;
+    int stop = 0, stat = 0;
+
+    frpre = 0;
+    repre = 0;
+    stop = 0;
+
+    while (1)
+    {
+        goForward();
+        stat = 1;
+
+        while (1)
+        {
+            renow = rearSensor(repre);
+            if (renow != 0)
+            {
+                repre = renow;
+                if (renow > d1)
+                    stop = 1;
+                break;
+            }
+        }
+        if (stop)
+        {
+            stopMotor();
+            break;
+        }
+
+        while (!stop)
+        {
+            if (!stat)
+                goForward();
+            frnow = frSensor(frpre);
+            if (frnow != 0)
+            {
+                frpre = frnow;
+                if (frnow < obstacleDistance)
+                {
+                    stopMotor();
+                    usleep(500000);
+                    stat = 0;
+                }
+                else
+                    break;
+            }
+        }
+    }
 }
 
 void move(char dest)
 {
+    int d1;
+    if (dest == 'A')
+        d1 = 5;
+    else if (dest == 'B')
+        d1 = 15;
+    else if (dest == 'C')
+        d1 = 25;
+
+    moveBackward(d1);
+    turnRight();
+    moveForward(wallDistance);
 }
 
 void moveTo(char dest)
 {
+    int d1;
+    if (dest == 'A')
+        d1 = 5;
+    else if (dest == 'B')
+        d1 = 15;
+
+    moveBackward(13);
+    turnLeft();
+    moveForward(totalSize - d1 - vehicleSize);
+    turnRight();
+    moveForward(wallDistance);
 }
 
-void moveRe(char dest)
+void moveRe()
 {
+    moveBackward(13);
+    turnLeft();
+    moveForward(totalSize - vehicleSize - wallDistance);
 }
 
 #endif

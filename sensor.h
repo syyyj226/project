@@ -65,7 +65,7 @@ static int disableSensor()
     return (4);
 }
 
-int frontSensor(double obstacleDistance)
+double frontSensor(double pre)
 {
   clock_t start_t, end_t;
   double time;
@@ -78,7 +78,7 @@ int frontSensor(double obstacleDistance)
   if (-1 == GPIOWrite(POUT1, 1))
   {
     printf("gpio write/trigger err\n");
-    return (3);
+    return (0);
   }
 
   usleep(10);
@@ -91,13 +91,14 @@ int frontSensor(double obstacleDistance)
     end_t = clock();
 
   time = (double)(end_t - start_t) / CLOCKS_PER_SEC; // ms
-  if (time / 2 * 34000 < obstacleDistance)
-    return 1;
+  distance = time / 2 * 34000;
+  if (distance > 0 && distance < 20 && (pre > distance ? (pre - distance) : (distance - pre)) < 3)
+    return distance;
   else
     return 0;
 }
 
-int rearSensor(double obstacleDistance) // 0 or 1 return
+double rearSensor(double pre)
 {
   clock_t start_t, end_t;
   double time;
@@ -106,14 +107,14 @@ int rearSensor(double obstacleDistance) // 0 or 1 return
   GPIOWrite(POUT2, 0);
   usleep(10000);
 
+  usleep(10);
+  GPIOWrite(POUT2, 0);
+
   if (-1 == GPIOWrite(POUT2, 1))
   {
     printf("gpio write/trigger err\n");
-    return (3);
+    return (0);
   }
-
-  usleep(10);
-  GPIOWrite(POUT2, 0);
 
   while (GPIORead(PIN2) == 0)
     start_t = clock();
@@ -122,8 +123,9 @@ int rearSensor(double obstacleDistance) // 0 or 1 return
     end_t = clock();
 
   time = (double)(end_t - start_t) / CLOCKS_PER_SEC; // ms
-  if (time / 2 * 34000 < obstacleDistance)
-    return 1;
+  distance = time / 2 * 34000;
+  if (distance > 0 && distance < 20 && (pre > distance ? (pre - distance) : (distance - pre)) < 3)
+    return distance;
   else
     return 0;
 }
